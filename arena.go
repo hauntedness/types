@@ -48,7 +48,7 @@ type WeakRef[T any] struct {
 	offset int
 }
 
-// NewWeakRef make weak reference of T on [types.Arena].
+// NewWeakRef make weak reference of T on [Arena].
 func NewWeakRef[T any](arena *Arena) WeakRef[T] {
 	offset := arena.Alloc(int(unsafe.Sizeof((*T)(nil))))
 	return WeakRef[T]{arena: arena, offset: offset}
