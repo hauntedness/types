@@ -1,7 +1,6 @@
 package types
 
 import (
-	"fmt"
 	"strconv"
 	"testing"
 	"unsafe"
@@ -50,18 +49,9 @@ func TestXxx(t *testing.T) {
 	}
 }
 
-func BenchmarkXxx(b *testing.B) {
-	a := 0
-	for i := 0; i < 1e8; i++ {
-		a += i << 3
+func TestSizeOf(t *testing.T) {
+	u := unsafe.Sizeof((*int)(nil))
+	if u != 8 {
+		t.Error("expect 8 bytes")
 	}
-	fmt.Println(a)
-}
-
-func BenchmarkXxx2(b *testing.B) {
-	a := 0
-	for i := 0; i < 1e8; i++ {
-		a += i * int(unsafe.Sizeof((*int)(nil)))
-	}
-	fmt.Println(a)
 }
