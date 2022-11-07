@@ -7,9 +7,9 @@ import "unsafe"
 //	for easy use, all value stored in int type
 //	if need, you can put multiple tiny objects size in one integer
 type Arena struct {
-	data  []int
-	len   int // current length of data
-	bytes []byte
+	data  []int  // primitive data
+	len   int    // current length of data
+	bytes []byte // fat pointer storage data like []byte or string
 }
 
 // NewArena create Arena of 512 bytes
@@ -21,11 +21,11 @@ func NewArena() *Arena {
 	}
 }
 
-func NewArenaWithSize(size int) *Arena {
+func NewArenaWithSize(size int, byteSize int) *Arena {
 	return &Arena{
 		data:  make([]int, size),
 		len:   0,
-		bytes: make([]byte, size*8),
+		bytes: make([]byte, byteSize),
 	}
 }
 
