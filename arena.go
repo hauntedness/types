@@ -7,22 +7,25 @@ import "unsafe"
 //	for easy use, all value stored in int type
 //	if need, you can put multiple tiny objects size in one integer
 type Arena struct {
-	data []int
-	len  int // current length of data
+	data  []int
+	len   int // current length of data
+	bytes []byte
 }
 
 // NewArena create Arena of 512 bytes
 func NewArena() *Arena {
 	return &Arena{
-		data: make([]int, 64),
-		len:  0,
+		data:  make([]int, 64),
+		len:   0,
+		bytes: make([]byte, 512),
 	}
 }
 
 func NewArenaWithSize(size int) *Arena {
 	return &Arena{
-		data: make([]int, size),
-		len:  0,
+		data:  make([]int, size),
+		len:   0,
+		bytes: make([]byte, size*8),
 	}
 }
 

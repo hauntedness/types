@@ -1,61 +1,52 @@
 package types
 
-import (
-	"unsafe"
-)
-
 // weak reference of T on arena
 //
 //	WeakRef[T] get rid of garbage collector but then could not benefit from go type system!
 //	use this carefully
 type WeakRef struct {
-	arena    *Arena
-	offset   int
-	pointers *[]unsafe.Pointer
+	arena  *Arena
+	offset int
 }
 
 // NewWeakRef make weak reference of T on [Arena].
 func NewWeakRef(arena *Arena, size int) WeakRef {
 	offset := arena.Alloc(size)
-	p := make([]unsafe.Pointer, 0)
-	return WeakRef{arena: arena, offset: offset, pointers: &p}
+	return WeakRef{arena: arena, offset: offset}
 }
 
 func (wr WeakRef) Offset() int {
 	return wr.offset
 }
 
-func (wr WeakRef) MustSetInt(i int, v int) {
+func (wr WeakRef) SetInt(i int, v int) {
 	wr.arena.data[wr.offset+i] = v
 }
 
-func (wr WeakRef) MustGetInt(i int) int {
+func (wr WeakRef) GetInt(i int) int {
 	return wr.arena.data[wr.offset+i]
 }
 
-func (wr WeakRef) MustSetBytes(i int, v []byte) {
-	wr.MustSetPointer(i, unsafe.Pointer(&v))
+func (wr *WeakRef) SetBytes(i int, v []byte) {
+	wr.arena.data[wr.offset+i] = len(wr.arena.bytes)
+	wr.arena.data[wr.offset+i+1] = len(v)
+	wr.arena.bytes = append(wr.arena.bytes, v...)
 }
 
-func (wr WeakRef) MustGetBytes(i int) []byte {
-	return *(*[]byte)(wr.MustGetPointer(i))
+func (wr WeakRef) GetBytes(i int) []byte {
+	start := wr.arena.data[wr.offset+i]
+	byteLength := wr.arena.data[wr.offset+i+1]
+	ret := make([]byte, byteLength)
+	copy(ret, wr.arena.bytes[start:])
+	return ret
 }
 
 // set pointer string or []byte is not recommend
 // as the native way is better choice
-func (wr WeakRef) MustSetString(i int, v string) {
-	wr.MustSetPointer(i, unsafe.Pointer(&v))
+func (wr *WeakRef) SetString(i int, v string) {
+	wr.SetBytes(i, []byte(v))
 }
 
-func (wr WeakRef) MustGetString(i int) string {
-	return *(*string)(wr.MustGetPointer(i))
-}
-
-func (wr WeakRef) MustSetPointer(i int, ptr unsafe.Pointer) {
-	wr.arena.data[wr.offset+i] = len(*wr.pointers)
-	*wr.pointers = append(*wr.pointers, ptr)
-}
-
-func (wr WeakRef) MustGetPointer(i int) unsafe.Pointer {
-	return (*wr.pointers)[wr.arena.data[wr.offset+i]]
+func (wr WeakRef) GetString(i int) string {
+	return string(wr.GetBytes(i))
 }
