@@ -14,12 +14,9 @@ func TestWeakRef_Offset(t *testing.T) {
 	fmt.Println(wr2.Offset())
 	// text := "hello world"
 	wr.SetInt(0, 1)
-	fmt.Println(arena.data)
-}
-
-type SomeStruct struct {
-	Ptr *int
-	Num int
+	if wr.GetInt(0) != 1 {
+		t.Error("want 1")
+	}
 }
 
 type Layout struct {
