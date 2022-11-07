@@ -6,36 +6,36 @@ package types
 //	use this carefully
 type WeakRef struct {
 	a *Arena // arena
-	o int    // offset
+	i int    // index or offset
 }
 
 // NewWeakRef make weak reference of T on [Arena].
 func NewWeakRef(arena *Arena, size int) WeakRef {
-	offset := arena.Alloc(size)
-	return WeakRef{a: arena, o: offset}
+	index := arena.Alloc(size)
+	return WeakRef{a: arena, i: index}
 }
 
-func (w WeakRef) Offset() int {
-	return w.o
+func (w WeakRef) Index() int {
+	return w.i
 }
 
 func (w WeakRef) SetInt(i int, v int) {
-	w.a.data[w.o+i] = v
+	w.a.data[w.i+i] = v
 }
 
 func (w WeakRef) GetInt(i int) int {
-	return w.a.data[w.o+i]
+	return w.a.data[w.i+i]
 }
 
 func (w WeakRef) SetBytes(i int, v []byte) {
-	w.a.data[w.o+i] = len(w.a.bytes)
-	w.a.data[w.o+i+1] = len(v)
+	w.a.data[w.i+i] = len(w.a.bytes)
+	w.a.data[w.i+i+1] = len(v)
 	w.a.bytes = append(w.a.bytes, v...)
 }
 
 func (w WeakRef) GetBytes(i int) []byte {
-	start := w.a.data[w.o+i]
-	length := w.a.data[w.o+i+1]
+	start := w.a.data[w.i+i]
+	length := w.a.data[w.i+i+1]
 	ret := make([]byte, length)
 	copy(ret, w.a.bytes[start:])
 	return ret

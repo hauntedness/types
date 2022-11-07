@@ -11,7 +11,7 @@ func TestWeakRef_Offset(t *testing.T) {
 	arena := NewArena()
 	wr := NewWeakRef(arena, int(unsafe.Sizeof(*(*Layout)(nil))))
 	wr2 := NewWeakRef(arena, int(unsafe.Sizeof(*(*Layout)(nil))))
-	fmt.Println(wr2.Offset())
+	fmt.Println(wr2.Index())
 	// text := "hello world"
 	wr.SetInt(0, 1)
 	if wr.GetInt(0) != 1 {
