@@ -27,7 +27,7 @@ func (wr WeakRef) GetInt(i int) int {
 	return wr.arena.data[wr.offset+i]
 }
 
-func (wr *WeakRef) SetBytes(i int, v []byte) {
+func (wr WeakRef) SetBytes(i int, v []byte) {
 	wr.arena.data[wr.offset+i] = len(wr.arena.bytes)
 	wr.arena.data[wr.offset+i+1] = len(v)
 	wr.arena.bytes = append(wr.arena.bytes, v...)
@@ -35,15 +35,13 @@ func (wr *WeakRef) SetBytes(i int, v []byte) {
 
 func (wr WeakRef) GetBytes(i int) []byte {
 	start := wr.arena.data[wr.offset+i]
-	byteLength := wr.arena.data[wr.offset+i+1]
-	ret := make([]byte, byteLength)
+	length := wr.arena.data[wr.offset+i+1]
+	ret := make([]byte, length)
 	copy(ret, wr.arena.bytes[start:])
 	return ret
 }
 
-// set pointer string or []byte is not recommend
-// as the native way is better choice
-func (wr *WeakRef) SetString(i int, v string) {
+func (wr WeakRef) SetString(i int, v string) {
 	wr.SetBytes(i, []byte(v))
 }
 
